@@ -14,9 +14,10 @@ define(function(require, exports) {
 	}
 	Gun.prototype = Object.create(THREE.Object3D.prototype);
 
-	Gun.prototype.fire = function(dir) {
+	Gun.prototype.fire = function(dir, velocity) {
 		var level = this.level;
 		var bullet = new Bullet(dir.clone());
+		bullet.body.velocity.vadd(velocity, bullet.body.velocity);
 		bullet.body.position.copy(this.localToWorld(this.position.clone()));
 		level.add(bullet);
 		level.bullets.push(bullet);

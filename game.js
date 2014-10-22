@@ -1,40 +1,40 @@
 define(function(require, exports) {
 
+	var loader = require('game/helpers/loader');
 	var input = require('game/system/input');
 	var Player = require('game/things/player');
-	var Block = require('game/things/block');
 	var Level = require('game/system/level');
+	var CameraFollowComponent = require('game/helpers/camera');
+
+	var width = 1024;
+	var height = 768;
 
 	var scene = new THREE.Scene();
-	var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+	var camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
 
 	var renderer = new THREE.WebGLRenderer();
-	renderer.setSize( window.innerWidth, window.innerHeight );
-	document.body.appendChild( renderer.domElement );
+	renderer.setSize(width, height);
+	document.body.appendChild(renderer.domElement);
 
-	camera.position.set(5, 5, 5);
+	camera.position.set(5, 15, 5);
 
 	var level = new Level();
 	var timestep = 1/60;
 
+	loader.file('world.json', function(file) {
+		var leveldata = JSON.parse(file).world;
+		level.generate(leveldata);
+	});
 
 	var player = new Player(level);
-	camera.lookAt(player.position);
 	level.add(player);
-
-
-	for(var i = 0; i < 35; i++) {
-		var block = new Block('tree');
-		block.position.set(Math.random() * -40 + 20, 0, Math.random() * -40 + 20);
-		block.body.position.copy(block.position);
-		level.add(block);
-	}
+	level.addComponent(new CameraFollowComponent(camera, player));
 
 
 	var light = new THREE.DirectionalLight(0xffffff, 0.5);
 	light.position.set(1, 1, 1);
 	level.add(light);
-	light = new THREE.HemisphereLight(0x888888, 0x888888, 0.5);
+	light = new THREE.HemisphereLight(0x888888, 0x888888, 1.0);
 	level.add(light);
 
 	level.add(new THREE.AxisHelper());

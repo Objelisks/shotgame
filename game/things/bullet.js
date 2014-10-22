@@ -8,7 +8,7 @@ define(function(require, exports) {
 		THREE.Object3D.call(this);
 
 		this.direction = direction;
-		this.movespeed = 5.0;
+		this.movespeed = 15.0;
 		this.life = new THREE.Clock(true);
 		this.maxLife = 2.0;
 
@@ -22,7 +22,7 @@ define(function(require, exports) {
 		});
 		this.body.collisionFilterGroup = collisionGroups.bullet;
 		this.body.collisionFilterMask = collisionGroups.terrain;
-		this.body.addShape(new CANNON.Box(new CANNON.Vec3(0.4, 0.4, 0.4)));
+		this.body.addShape(new CANNON.Sphere(0.5));
 
 		var velocity = direction.clone().multiplyScalar(this.movespeed);
 		this.body.velocity.set(velocity.x, velocity.y, velocity.z);

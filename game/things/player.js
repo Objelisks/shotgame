@@ -1,6 +1,7 @@
 define(function(require, exports) {
 
 	var collisionGroups = require('game/helpers/collisionGroups');
+	var ComponentHolder = require('game/helpers/component');
 	var input = require('game/system/input');
 	var Gun = require('game/things/gun');
 
@@ -8,6 +9,7 @@ define(function(require, exports) {
 	// and shots it (gun)
 	var Player = function(level) {
 		THREE.Object3D.call(this);
+		ComponentHolder.call(this);
 
 		this.level = level;
 		
@@ -69,10 +71,12 @@ define(function(require, exports) {
 			this.gun.position.copy(aim);
 
 			if(this.fireTick > this.fireRate) {
-				this.gun.fire(aim);
+				this.gun.fire(aim, this.body.velocity);
 				this.fireTick = 0;
 			}
 		}
+
+		this.dispatchEvent({'type': 'update', 'delta': delta});
 	}
 
 	return Player;

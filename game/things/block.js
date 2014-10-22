@@ -16,7 +16,7 @@ define(function(require, exports) {
 		});
 		this.body.collisionFilterGroup = collisionGroups.terrain;
 		this.body.collisionFilterMask = collisionGroups.bullet + collisionGroups.player;
-		this.body.addShape(new CANNON.Box(new CANNON.Vec3(0.15, 1, 0.15)));
+		this.body.addShape(new CANNON.Box(new CANNON.Vec3(1, 1, 1)));
 
 	}
 	Block.prototype = Object.create(THREE.Object3D.prototype);
