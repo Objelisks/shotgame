@@ -52,6 +52,15 @@ define(function(require, exports) {
 
 	Level.prototype.generate = function(leveldata) {
 
+		this.add(new THREE.AxisHelper());
+		
+		var ground = new THREE.Mesh(
+			new THREE.PlaneGeometry(100, 100),
+			new THREE.MeshLambertMaterial({color:0x6AB417}));
+		ground.rotation.x = -Math.PI/2;
+		ground.position.y = -0.5;
+		this.add(ground);
+
 		var tiles = ['', 'tree', 'simple_block', 'green_block'];
 		var block, scale = 2, self = this;
 		leveldata.forEach(function(row, i) {

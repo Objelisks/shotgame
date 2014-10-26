@@ -19,6 +19,7 @@ define(function(require, exports) {
 		var bullet = new Bullet(dir.clone());
 		bullet.body.velocity.vadd(velocity, bullet.body.velocity);
 		bullet.body.position.copy(this.localToWorld(this.position.clone()));
+		bullet.position.copy(bullet.body);
 		level.add(bullet);
 		level.bullets.push(bullet);
 		bullet.addEventListener('death', function(event) {

@@ -37,6 +37,48 @@ define(function(require, exports) {
 		this.minInput = 0.2;
 		this.fireRate = 0.1;
 		this.fireTick = 0;
+
+		var self = this;
+
+		this.input = input.release();
+		input.take(this.input);
+
+		// for stick input can assume these will be called once per update
+		this.input.addEventListener('leftStick', function(e) {
+
+			// calculate movement vector and apply
+			if(e.message.length() > self.minInput) {
+				var rotation = -45 * Math.PI / 180;
+				var dx = e.message.x * e.delta * Math.cos(rotation)
+					+ e.message.y * e.delta * -Math.sin(rotation);
+				var dz = e.message.x * e.delta * Math.sin(rotation)
+					+ e.message.y * e.delta * Math.cos(rotation);
+				var movement = new CANNON.Vec3(dx * self.movespeed, 0, dz * self.movespeed);
+				self.body.velocity.x += movement.x;
+				self.body.velocity.z += movement.z;
+			}
+		});
+
+		this.input.addEventListener('rightStick', function(e) {
+
+			// aim and fire weapon
+			self.fireTick += e.delta;
+			if(e.message.length() > self.minInput) {
+				var rotation = -45 * Math.PI / 180;
+				var dx = e.message.x * e.delta * Math.cos(rotation)
+					+ e.message.y * e.delta * -Math.sin(rotation);
+				var dz = e.message.x * e.delta * Math.sin(rotation)
+					+ e.message.y * e.delta * Math.cos(rotation);
+
+				var aim = new THREE.Vector3(dx, 0, dz).normalize();
+				self.gun.position.copy(aim);
+
+				if(self.fireTick > self.fireRate) {
+					self.gun.fire(aim, self.body.velocity);
+					self.fireTick = 0;
+				}
+			}
+		});
 	}
 	Player.prototype = Object.create(THREE.Object3D.prototype);
 
@@ -44,37 +86,6 @@ define(function(require, exports) {
 		// copy from physics
 		this.position.copy(this.body.position);
 		this.quaternion.copy(this.body.quaternion);
-
-		// calculate movement vector and apply
-		if(input.move.length() > this.minInput) {
-			var rotation = -45 * Math.PI / 180;
-			var dx = input.move.x * delta * Math.cos(rotation)
-				+ input.move.y * delta * -Math.sin(rotation);
-			var dz = input.move.x * delta * Math.sin(rotation)
-				+ input.move.y * delta * Math.cos(rotation);
-			var movement = new CANNON.Vec3(dx * this.movespeed, 0, dz * this.movespeed);
-			this.body.velocity.x += movement.x;
-			this.body.velocity.z += movement.z;
-			//this.body.applyImpulse(movement, this.body.position);
-		}
-
-		// shoot gun
-		this.fireTick += delta;
-		if(input.fire.length() > this.minInput) {
-			var rotation = -45 * Math.PI / 180;
-			var dx = input.fire.x * delta * Math.cos(rotation)
-				+ input.fire.y * delta * -Math.sin(rotation);
-			var dz = input.fire.x * delta * Math.sin(rotation)
-				+ input.fire.y * delta * Math.cos(rotation);
-
-			var aim = new THREE.Vector3(dx, 0, dz).normalize();
-			this.gun.position.copy(aim);
-
-			if(this.fireTick > this.fireRate) {
-				this.gun.fire(aim, this.body.velocity);
-				this.fireTick = 0;
-			}
-		}
 
 		this.dispatchEvent({'type': 'update', 'delta': delta});
 	}

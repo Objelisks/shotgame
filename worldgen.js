@@ -22,7 +22,7 @@ for (i = 0; i < width; i++) {
 	world[i] = [];
 	for (j = 0; j < height; j++) {
 		var si = i / scale, sj = j / scale;
-		g = grass.noise2D(si, sj), w = wall.noise2D(si, sj), f = forest.noise2D(si, sj), p = pyramid.noise2D(si, sj);
+		g = grass.noise2D(si, sj) + 0.4, w = wall.noise2D(si, sj), f = forest.noise2D(si, sj), p = pyramid.noise2D(si, sj);
 		if(g === Math.max(g, w, f, p)) {
 			world[i][j] = 0;
 		} else if(w === Math.max(g, w, f, p)) {

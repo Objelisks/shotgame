@@ -3,6 +3,7 @@ define(function(require, exports) {
 	var loader = require('game/helpers/loader');
 	var input = require('game/system/input');
 	var Player = require('game/things/player');
+	var Equipment = require('game/things/equipment');
 	var Level = require('game/system/level');
 	var CameraFollowComponent = require('game/helpers/camera');
 
@@ -19,6 +20,7 @@ define(function(require, exports) {
 	camera.position.set(5, 15, 5);
 
 	var level = new Level();
+	level.add(camera);
 	var timestep = 1/60;
 
 	loader.file('world.json', function(file) {
@@ -26,24 +28,19 @@ define(function(require, exports) {
 		level.generate(leveldata);
 	});
 
-	var player = new Player(level);
-	level.add(player);
-	level.addComponent(new CameraFollowComponent(camera, player));
-
-
 	var light = new THREE.DirectionalLight(0xffffff, 0.5);
 	light.position.set(1, 1, 1);
 	level.add(light);
 	light = new THREE.HemisphereLight(0x888888, 0x888888, 1.0);
 	level.add(light);
 
-	level.add(new THREE.AxisHelper());
-	var ground = new THREE.Mesh(
-		new THREE.PlaneGeometry(100, 100),
-		new THREE.MeshLambertMaterial({color:0x6AB417}));
-	ground.rotation.x = -Math.PI/2;
-	ground.position.y = -0.5;
-	level.add(ground);
+	var player = new Player(level);
+	level.add(player);
+	level.addComponent(new CameraFollowComponent(camera, player));
+
+	var equipmentScreen = new Equipment();
+	camera.add(equipmentScreen);
+	equipmentScreen.position.y = 2;
 
 	var clock = new THREE.Clock(true);
 	function render() {
@@ -58,15 +55,14 @@ define(function(require, exports) {
 	render();
 
 
-	// input
-	// movement
-	// collision
-	// shot gun
-	// bullets
-	// pooling
-	// bullet death
 	// screenshake
-	// terrain
 	// snd efx
+	// enemies
+	// enemy death
+	// poof efx
+	// weapon customizer
+	// pickups
+	// destructable walls
+	// larger levels
 
 });
